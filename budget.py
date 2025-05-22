@@ -86,7 +86,7 @@ class Expences(Catregory):
     
     def print_names(self):
         for _ in range(self.max_lent):
-            print(f"    {Catregory.categories[0][0]}    {Catregory.categories[1][0]}    {Catregory.categories[2][0]}")
+            print(f"{Catregory.categories[0][0]:>4}{Catregory.categories[1][0]:>4}{Catregory.categories[2][0]:>4}")
             Catregory.categories = list(map(Expences.helper,Catregory.categories))
             
             
