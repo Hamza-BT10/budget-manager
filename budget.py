@@ -86,10 +86,10 @@ class DashBoard(Catregory):
             space=5
             for name in Catregory.names:
                 if name[i]:
-                    print(f"{name[i].rjust(space)}",end='')
+                    print(name[i].rjust(space),end='')
                     space = 4
                 else:
-                    print(f"{" ".rjust(space)}",end='')
+                    print(" ".rjust(space),end='')
                     space = 4      
             print()  
     def print_dush_board(self,names:list):
