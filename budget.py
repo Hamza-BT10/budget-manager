@@ -1,11 +1,11 @@
 class Catregory:
-    categories = []
-    def __init__(self, name,from_Expences = False):
+    names = []
+    def __init__(self, name, from_dashboard= False):
         self.name = name
         self.ledger = list()
         self.balance = 0
-        if not from_Expences:
-            Catregory.categories.append(name)
+        if not from_dashboard:
+            Catregory.names.append(name)
         
     def check_funds(self, amount):
         if amount > self.balance:
@@ -42,70 +42,80 @@ class Catregory:
         self.balance = total
         return self.balance
       
-    def transfer(self, amount, category):
+    def transfer(self, amount, name):
         if self.check_funds(amount):
-          self.withdraw(amount, "Transfer to " + category.name)
-          self.deposit(amount, "Transfer from " + self.name)
-          return True
-           
-class Expences(Catregory):
+            self.withdraw(amount, "Transfer to " + name.name)
+            self.deposit(amount, "Transfer from " + self.name)
+            return True
+
+class DashBoard(Catregory):
     def __init__(self,name):
-        super().__init__(name ,from_Expences= True)
+        super().__init__(name,from_dashboard = True)
         self.percentages = []
         self.max_lent = 0
-        
-    def get_purcentages(self, categories):
-        for category in categories:
-            if len(category.ledger) > 1:
-                category_spent = category.ledger[1]["amount"]
-                category_percentage = abs(category_spent)*100 / (category.balance + abs(category_spent))
+
+    def get_purcentages(self,names: list):
+        for name in names:
+            if len(name.ledger) > 1:
+                category_spent = name.ledger[1]["amount"]
+                category_percentage = abs(category_spent)*100 / (name.balance + abs(category_spent))
                 self.percentages.append(category_percentage)
             else:
                 self.percentages.append(0)
-    def print_dush(self):
+           
+    # Add spaces to names that have less lenth than the gratest  
+    def add_apaces(self):
+        self.max_lent = max([len(char) for char in Catregory.names])
+        for i,name in enumerate(Catregory.names):
+           if len(name) < self.max_lent:
+                Catregory.names[i] = name.ljust(self.max_lent)
+    
+    def dush(self):
         for i in range(100,-10,-10):
             print(f"{i:3}|",end='')
             for percentage in self.percentages: 
                 if percentage >= i:
-                    print("o  ", end="")
+                    print("o   ", end="")
                 else:
                     print("   ", end="")
             print()
-        print("    " + "-"*10) 
-           
-    # Add spaces to names that have less lent than the gratest 
-    def add_apaces(self):
-        self.max_lent = max([len(char) for char in Catregory.categories])
-        for i,name in enumerate(Catregory.categories):
-           if len(name) < self.max_lent:
-              Catregory.categories[i] = name + (' '*(self.max_lent-len(name)))
-        return Catregory.categories
-    @staticmethod    
-    def helper(names: list):
-        return names[1:] 
-    
-    def print_names(self):
-        for _ in range(self.max_lent):
-            print(f"{Catregory.categories[0][0]:>4}{Catregory.categories[1][0]:>4}{Catregory.categories[2][0]:>4}")
-            Catregory.categories = list(map(Expences.helper,Catregory.categories))
+        print("   " + "-"*10) 
+
+    def names(self):
+        for i in range(self.max_lent):
+            space=5
+            for name in Catregory.names:
+                if name[i]:
+                    print(f"{name[i].rjust(space)}",end='')
+                    space = 4
+                else:
+                    print(f"{" ".rjust(space)}",end='')
+                    space = 4      
+            print()  
+    def print_dush_board(self,names:list):
+        self.get_purcentages(names)
+        self.add_apaces()
+        self.dush()
+        self.names()
+
             
-            
-food = Catregory("FOOD")
+food = Catregory("Food")
 clothing = Catregory("Clothing")
 auto = Catregory("Auto")
-food.deposit(1000, "restaurant")
-clothing.deposit(500, "shopping")
-auto.deposit(1000, "gas")
-food.withdraw(700, "restaurant")
-clothing.withdraw(200, "shopping")
-auto.withdraw(100, "gas")
-print(Catregory.categories)
-print('='*30)
-expences = Expences('expences')
-categories = [food,clothing,auto]
-expences.get_purcentages(categories)
-expences.add_apaces()
-expences.print_dush()
-expences.helper(Catregory.categories)
-expences.print_names()
+food.deposit(1000, "Restaurant")
+clothing.deposit(500, "Shopping")
+auto.deposit(1000, "Gas")
+food.withdraw(700, "Restaurant")
+clothing.withdraw(200, "Shopping")
+auto.withdraw(100, "Gas")
+dashboard = DashBoard("Dashboard")
+all_category = [food, clothing, auto]
+dashboard.print_dush_board(all_category)
+
+            
+
+
+
+
+
 
