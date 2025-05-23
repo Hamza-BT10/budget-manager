@@ -6,11 +6,6 @@ class Catregory:
         self.balance = 0
         if not from_dashboard:
             Catregory.names.append(name)
-        
-    def check_funds(self, amount):
-        if amount > self.balance:
-          return False
-        return True
     def __str__(self):
         title = f"{self.name:*^30}\n"
         items = ""
@@ -19,7 +14,12 @@ class Catregory:
           items += f"{item['description'][0:23]:23}" + f"{item['amount']:>7.2f}" + '\n'
           total += item["amount"]
         output = title + items + "Total: " + str(total)
-        return output
+        return output        
+        
+    def check_funds(self, amount):
+        if amount > self.balance:
+          return False
+        return True
       
     def deposit(self, amount, description=""):
         self.ledger.append({"amount": amount, "description": description})
@@ -31,7 +31,6 @@ class Catregory:
           self.ledger.append({"amount": -amount, "description": description})
           self.balance -= amount
           print(f"Withdraw {amount} from {self.name}")
-          return True
         else:
           print("Insufficient funds")
 
@@ -41,11 +40,11 @@ class Catregory:
           total += item["amount"]
         self.balance = total
         return self.balance
-      
+        
     def transfer(self, amount, name):
         if self.check_funds(amount):
             self.withdraw(amount, "Transfer to " + name.name)
-            self.deposit(amount, "Transfer from " + self.name)
+            name.deposit(amount, "Transfer from " + self.name)
             return True
 
 class DashBoard(Catregory):
@@ -56,7 +55,7 @@ class DashBoard(Catregory):
 
     def get_purcentages(self,names: list):
         for name in names:
-            if len(name.ledger) > 1:
+            if len(name.ledger):
                 category_spent = name.ledger[1]["amount"]
                 category_percentage = abs(category_spent)*100 / (name.balance + abs(category_spent))
                 self.percentages.append(category_percentage)
@@ -79,7 +78,7 @@ class DashBoard(Catregory):
                 else:
                     print("   ", end="")
             print()
-        print("   " + "-"*10) 
+        print("    " + "-"*10) 
 
     def names(self):
         for i in range(self.max_lent):
@@ -97,25 +96,17 @@ class DashBoard(Catregory):
         self.add_apaces()
         self.dush()
         self.names()
-
-            
+           
 food = Catregory("Food")
 clothing = Catregory("Clothing")
 auto = Catregory("Auto")
-food.deposit(1000, "Restaurant")
-clothing.deposit(500, "Shopping")
-auto.deposit(1000, "Gas")
+food.deposit(1000, "First deposit")
+clothing.deposit(500, "First deposit")
+auto.deposit(1000, "First deposit")
 food.withdraw(700, "Restaurant")
 clothing.withdraw(200, "Shopping")
 auto.withdraw(100, "Gas")
+auto.transfer(200,food)
 dashboard = DashBoard("Dashboard")
 all_category = [food, clothing, auto]
 dashboard.print_dush_board(all_category)
-
-            
-
-
-
-
-
-
